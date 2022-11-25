@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/home/app
+    depends_on:
+      - "mongodb"
+    command: ./docker-entrypoint.sh
+    restart: unless-stopped
+    networks:
+      - local
+ 
+  web_test:
+    image: jenkins-web
+    command: npm test
+    restart: unless-stopped
+    networks:
+      - local
+    
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    networks:
+      - local
+networks:
+  local:
+  

@@ -1,0 +1,13 @@
+# Step 1: Build stage
+FROM node:19.1.0-alpine3.15 AS build-stage
+WORKDIR /home/app
+COPY package*.json .
+RUN npm i
+COPY . .
+RUN npm run build
+
+# Step 2: Production
+FROM nginx:1.23.2-alpine
+COPY --from=build-stage /home/app/build /var/www/html/build
+EXPOSE 80
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
